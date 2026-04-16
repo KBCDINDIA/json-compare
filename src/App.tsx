@@ -11,6 +11,8 @@ import {
 import { JsonPanel } from './components/JsonPanel';
 import { SummaryCard } from './components/SummaryCard';
 import { TimelineResults } from './components/TimelineResults';
+import { ComparisonTable } from './components/ComparisonTable';
+import { StoryView } from './components/StoryView';
 import { OptionsPanel } from './components/OptionsPanel';
 import { ReportPdf } from './components/ReportPdf';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -191,6 +193,8 @@ function App() {
 
               <SummaryCard result={result} />
               <TimelineResults result={result} />
+              <ComparisonTable result={result} />
+              <StoryView result={result} />
             </section>
           </ErrorBoundary>
         )}
