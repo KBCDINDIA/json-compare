@@ -328,10 +328,15 @@ export function ReportPdf({ result, includeAll = false }: Props) {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
+          <Text style={{ fontSize: 10, fontFamily: 'Helvetica-Bold', color: COLORS.primary, letterSpacing: 2, marginBottom: 2 }}>
+            KBCD INDIA
+          </Text>
           <Text style={styles.title}>JSON Comparison Report</Text>
           <Text style={styles.subtitle}>
-            Generated on {formatNow()} • {sorted.length} entries •{' '}
-            {pairs.length} date-wise comparison
+            Internal Data Comparison System • Generated on {formatNow()}
+          </Text>
+          <Text style={styles.subtitle}>
+            {sorted.length} entries • {pairs.length} date-wise comparison
             {pairs.length === 1 ? '' : 's'}
           </Text>
         </View>
@@ -400,7 +405,7 @@ export function ReportPdf({ result, includeAll = false }: Props) {
         <Text
           style={styles.footer}
           render={({ pageNumber, totalPages }) =>
-            `JSON Compare  •  Generated in your browser  •  Page ${pageNumber} of ${totalPages}`
+            `KBCD INDIA  •  Internal Data Comparison System  •  Confidential  •  Page ${pageNumber} of ${totalPages}`
           }
           fixed
         />
