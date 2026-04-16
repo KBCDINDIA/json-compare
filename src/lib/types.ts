@@ -27,24 +27,46 @@ export interface DiffGroup {
   entries: DiffEntry[];
 }
 
+export interface DiffCounts {
+  added: number;
+  removed: number;
+  changed: number;
+  typeChanged: number;
+  moved: number;
+  total: number;
+}
+
 export interface DiffResult {
   groups: DiffGroup[];
   entries: DiffEntry[];
   topFindings: DiffEntry[];
-  counts: {
-    added: number;
-    removed: number;
-    changed: number;
-    typeChanged: number;
-    moved: number;
-    total: number;
-  };
+  counts: DiffCounts;
   stats: {
     aFields: number;
     bFields: number;
     aBytes: number;
     bBytes: number;
   };
+}
+
+export interface JsonEntry {
+  id: string;
+  date: string; // ISO date string (yyyy-mm-dd) or empty
+  title: string;
+  remarks: string;
+  json: string;
+}
+
+export interface TimelinePair {
+  from: JsonEntry;
+  to: JsonEntry;
+  diff: DiffResult;
+}
+
+export interface TimelineResult {
+  sorted: JsonEntry[]; // entries sorted by date ascending
+  pairs: TimelinePair[]; // N-1 pairs
+  totalCounts: DiffCounts;
 }
 
 export interface CompareOptions {

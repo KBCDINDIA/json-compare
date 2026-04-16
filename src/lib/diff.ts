@@ -1,11 +1,15 @@
 import diff from 'microdiff';
 import type {
   CompareOptions,
+  DiffCounts,
   DiffEntry,
   DiffGroup,
   DiffResult,
+  JsonEntry,
   JsonValue,
   Severity,
+  TimelinePair,
+  TimelineResult,
 } from './types';
 import {
   countFields,
@@ -223,4 +227,52 @@ export function runDiff(
       bBytes: rawB ? new Blob([rawB]).size : 0,
     },
   };
+}
+
+function emptyCounts(): DiffCounts {
+  return { added: 0, removed: 0, changed: 0, typeChanged: 0, moved: 0, total: 0 };
+}
+
+export function runTimelineDiff(
+  entries: JsonEntry[],
+  opts: CompareOptions,
+): TimelineResult {
+  // Sort by date ascending. Entries with missing date keep original order at the end.
+  const withIdx = entries.map((e, i) => ({ e, i }));
+  withIdx.sort((a, b) => {
+    const da = a.e.date?.trim() || '';
+    const db = b.e.date?.trim() || '';
+    if (!da && !db) return a.i - b.i;
+    if (!da) return 1;
+    if (!db) return -1;
+    if (da === db) return a.i - b.i;
+    return da < db ? -1 : 1;
+  });
+  const sorted = withIdx.map((x) => x.e);
+
+  const pairs: TimelinePair[] = [];
+  const totalCounts = emptyCounts();
+
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const from = sorted[i];
+    const to = sorted[i + 1];
+    let a: JsonValue;
+    let b: JsonValue;
+    try {
+      a = JSON.parse(from.json) as JsonValue;
+      b = JSON.parse(to.json) as JsonValue;
+    } catch {
+      continue;
+    }
+    const d = runDiff(a, b, opts, from.json, to.json);
+    pairs.push({ from, to, diff: d });
+    totalCounts.added += d.counts.added;
+    totalCounts.removed += d.counts.removed;
+    totalCounts.changed += d.counts.changed;
+    totalCounts.typeChanged += d.counts.typeChanged;
+    totalCounts.moved += d.counts.moved;
+    totalCounts.total += d.counts.total;
+  }
+
+  return { sorted, pairs, totalCounts };
 }
